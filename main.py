@@ -1,10 +1,12 @@
+
 from bs4 import BeautifulSoup
 import requests
+import sys
 
-f = open('course_id.txt', 'r')
-course_id = str(f.read())
-f.close()
+#course_id = '58584'
+course_id = sys.argv[1]
 r = requests.get('https://www.memrise.com/course/' + course_id)
+
 soup = BeautifulSoup(r.content, 'html.parser')
 
 # extract url for each level
@@ -19,9 +21,9 @@ for level_url in level_urls:
     for s in soup.find_all('div', attrs = {'class' : 'col_a col text'}):
         word = s.get_text()
         translation = s.next_sibling()[0].get_text()
-        all_words = all_words + word + '\t' + translation + '\n'        
+        all_words = all_words + word + ',' + translation + '\n'        
 
-f = open(course_id + '.txt', 'w')
+f = open(course_id + '.csv', 'w')
 f.write(all_words)
 f.close()
 
